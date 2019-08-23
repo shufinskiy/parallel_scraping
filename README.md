@@ -1,6 +1,8 @@
 # parallel_scraping
 Speed up the scraping process with parallel calculations. Rcrawler package overview.
 
+Проверка производится на 100 страницах сайта книжного магазина **Лабиринт**
+
 Скорость скрэпинга без использования параллельных вычислений
 
 |пользователь |     система   |    прошло |
