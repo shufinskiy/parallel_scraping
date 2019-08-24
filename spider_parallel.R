@@ -1,18 +1,31 @@
 library(data.table)
 library(doParallel)
 
+# Scraping 100 страниц Лабиринта с помощью функции ContentScraper пакета  Rcrawler.
+# system.time - функция, возвращающая время выполнения выражения.
+
 sys3 <- system.time({
   labirint_parallel_spider <- function(start, end) {
+    
+    # Получение 100 адресов страниц книжного магазина Лабиринт 
     list_url <- paste0("https://www.labirint.ru/books/", 
                        str_pad(c(start:end), 7, side = "left", pad = 0), "/")
+    
+    # detectCores - функция, считающая количество ядер процессора
     number_cl <- detectCores()
+    
+    # makePSOCKcluster - функция создающая копии R, которые работают параллельно
     cluster <- makePSOCKcluster(number_cl)
     registerDoParallel(cluster)
     
+    # Функция для извлечения и очистки данных с веб-страниц сайта Лабиринт
     scraping_parellel_func <- function(n){
       library(rvest)
       library(purrr)
       library(stringr)
+      
+      # possibly - функция, которая использует значение по умолчанию (здесь NA)
+      # каждый раз, когда возникает ошибка. Выполнение кода не останавливается.
       book_html <- possibly(read_html, "NA")(n)
       
       isbn <- if(book_html != "NA") {
@@ -104,13 +117,17 @@ sys3 <- system.time({
         NA
       }
       
-      list12 <- list(isbn, price, name, author, publisher, year, page)
-      return(list12)
+      list <- list(isbn, price, name, author, publisher, year, page)
+      return(list)
     }
     
-    big_list12 <- parLapply(cluster, list_url, scraping_parellel_func)
+    # parLapply - аналог lapply функции для параллельных вычислений
+    big_list <- parLapply(cluster, list_url, scraping_parellel_func)
+    
+    # Прекращение параллельных вычислений
     stopCluster(cluster)
     
+    # Создание таблицы данных из списка
     table <- rbindlist(big_list12)
     colnames(table) <- c("ISBN",
                          "PRICE", 
