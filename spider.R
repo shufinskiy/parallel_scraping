@@ -1,14 +1,19 @@
 library(rvest)
-library(selectr)
-library(xml2)
-library(jsonlite)
-library(tidyverse)
+library(stringr)
+library(purrr)
+# Scraping 100 страниц Лабиринта с помощью функции ContentScraper пакета  Rcrawler.
+# system.time - функция, возвращающая время выполнения выражения.
 
 sys1 <- system.time({
   labirint_spider <- function(start, end){
+    
+    # Получение 100 адресов страниц книжного магазина Лабиринт 
     list_url <- paste0("https://www.labirint.ru/books/", 
                        str_pad(c(start:end), 7, side = "left", pad = 0), "/")
     
+    # "Прочтение" всех HTML-страниц из полученных адресов
+    # possibly - функция, которая использует значение по умолчанию (здесь NA)
+    # каждый раз, когда возникает ошибка. Выполнение кода не останавливается.
     list_html <- lapply(list_url, function(n){
       book_html <- possibly(read_html, "NA")(n)
     })
