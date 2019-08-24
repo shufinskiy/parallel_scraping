@@ -3,22 +3,32 @@ library(doParallel)
 library(foreach)
 library(snow)
 library(dplyr)
-# rm(list = ls())
+
+# Scraping 100 страниц Лабиринта с помощью функции ContentScraper пакета  Rcrawler.
+# system.time - функция, возвращающая время выполнения выражения.
 
 sys2 <- system.time({
   labirint_foreach_spider <- function(start, end){
+    
+    # Получение 100 адресов страниц книжного магазина Лабиринт 
     list_url <- paste0("https://www.labirint.ru/books/", 
                        str_pad(c(start:end), 7, side = "left", pad = 0), "/")
+    # detectCores - функция, считающая количество ядер процессора
     number_cl <- detectCores()
-    # cluster <- makePSOCKcluster(number_cl)
+    
+    # makeCluster - функция создающая копии R, которые работают параллельно
     cluster <- makeCluster(number_cl, type = "SOCK")
+    
     registerDoParallel(cluster)
     
+    # Функция для извлечения и очистки данных с веб-страниц сайта Лабиринт
     scraping_func <- function(n){
       library(rvest)
       library(purrr)
       library(stringr)
       
+      # possibly - функция, которая использует значение по умолчанию (здесь NA)
+      # каждый раз, когда возникает ошибка. Выполнение кода не останавливается.
       book_html <- possibly(read_html, "NA")(n)
       
       isbn <- if(book_html != "NA") {
@@ -113,10 +123,11 @@ sys2 <- system.time({
       return(list12)
     }
     
-    big_list37 <- foreach(i = seq_along(list_url)) %dopar% scraping_func(list_url[i])
+    # %dopar% - параллельное вычисление объекта foreach
+    big_list <- foreach(i = seq_along(list_url)) %dopar% scraping_func(list_url[i])
     stopCluster(cluster)
     
-    table <- rbindlist(big_list37)
+    table <- rbindlist(big_list)
     colnames(table) <- c("ISBN",
                          "PRICE", 
                          "NAME", 
