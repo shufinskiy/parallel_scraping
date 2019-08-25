@@ -1,5 +1,5 @@
-# Загружаемый пакет для параллельного вычисления
 library(doParallel)
+library(stringr)
 
 # Scraping 100 страниц Лабиринта с помощью функции ContentScraper пакета  Rcrawler.
 # system.time - функция, возвращающая время выполнения выражения.
