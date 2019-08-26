@@ -1,5 +1,4 @@
-# parallel_scraping
-Speed up the scraping process with parallel calculations. Rcrawler package overview.
+### Вся необходимая информация есть в статье [Web scraping на R, часть 2. Ускорение процесса с помощью параллельных вычислений и использование пакета Rcrawler](https://habr.com/ru/post/464399/)
 
 Проверка производится на 100 страницах сайта книжного магазина **Лабиринт**
 
