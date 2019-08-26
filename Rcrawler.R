@@ -24,4 +24,11 @@ sys <- system.time(t <- ContentScraper(list_url, CssPatterns = c("#product-title
                                                                  ".pages2"),
                                        ExcludeCSSPat = c(".prodtitle-availibility",
                                                          ".js-open-block-page_count"), 
-                                       ManyPerPattern = FALSE))
+                                       ManyPerPattern = FALSE,
+                                       PatternsName = c("title",
+                                         "author",
+                                         "price1",
+                                         "price2",
+                                         "publisher",
+                                         "isbn",
+                                         "page")))
